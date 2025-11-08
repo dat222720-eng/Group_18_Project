@@ -1,11 +1,13 @@
 import axios from "axios";
 
-const API_ROOT = process.env.REACT_APP_API_URL || "http://localhost:5000";
-export const api = axios.create({ baseURL: `${API_ROOT}/api` });
-export const Users = {
-  list: (params = {}) => api.get("/users", { params }),
-  create: (body) => api.post("/users", body),
-  update: (id, body) => api.put(`/users/${id}`, body),
-  remove: (id) => api.delete(`/users/${id}`),
-};
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API || "http://localhost:5000",
+});
 
+api.interceptors.request.use(cfg => {
+  const token = localStorage.getItem("token");
+  if (token) cfg.headers.Authorization = `Bearer ${token}`;
+  return cfg;
+});
+
+export default api;
